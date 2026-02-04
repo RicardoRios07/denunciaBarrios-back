@@ -127,17 +127,48 @@ const { sendResponse } = require('../../utils/responseHandler');
 
 router.post('/', verifyAdminToken, async (req, res) => {
     try {
-        const { _id, estado } = req.body;
+        const { _id, estado, observaciones, prioridad } = req.body;
 
         if (!_id || !estado) {
             return sendResponse(res, 400, {}, 'Denuncia no encontrada o parámetros faltantes.');
         }
 
-        const denunciaActualizada = await Denuncia.findByIdAndUpdate(_id, { estado }, { new: true });
+        const denuncia = await Denuncia.findById(_id);
 
-        if (!denunciaActualizada) {
+        if (!denuncia) {
             return sendResponse(res, 400, {}, 'Denuncia no encontrada.');
         }
+
+        // Actualizar estado
+        denuncia.estado = estado;
+
+        // Actualizar prioridad si se proporciona
+        if (prioridad) {
+            denuncia.prioridad = prioridad;
+        }
+
+        // Agregar al historial de estados
+        denuncia.historialEstados.push({
+            estado: estado,
+            fecha: new Date(),
+            adminResponsable: req.adminId,
+            observaciones: observaciones || `Estado cambiado a: ${estado}`
+        });
+
+        // Si el estado es "Atendida", actualizar contador del personal asignado
+        if (estado === 'Atendida' && denuncia.personalAsignado) {
+            const PersonalMunicipal = require('../../Models/personalMunicipal');
+            await PersonalMunicipal.findByIdAndUpdate(
+                denuncia.personalAsignado,
+                { $inc: { denunciasResueltas: 1 } }
+            );
+        }
+
+        await denuncia.save();
+
+        const denunciaActualizada = await Denuncia.findById(_id)
+            .populate('personalAsignado', 'nombreCompleto cargo departamento')
+            .populate('historialEstados.adminResponsable', 'nombreCompleto email');
 
         // Enviar correo electrónico al usuario sobre la actualización del estado de la denuncia (Opcional)
         // Omitido: Implementación del envío de correo electrónico para simplificar

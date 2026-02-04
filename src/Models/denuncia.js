@@ -50,8 +50,48 @@ const denunciaSchema = new mongoose.Schema(
     },
     estado: {
       type: String,
-      enum: ['En revisión', 'En proceso', 'Atendida'],
+      enum: ['En revisión', 'En proceso', 'Atendida', 'No procede'],
       default: 'En revisión'
+    },
+    personalAsignado: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'PersonalMunicipal',
+      default: null
+    },
+    respuestaPredeterminada: {
+      tipo: {
+        type: String,
+        enum: ['tiempo_resolucion', 'no_procede', 'personalizada']
+      },
+      mensaje: {
+        type: String
+      },
+      tiempoEstimado: {
+        type: String // e.g., "2-3 días", "1 semana", "15 días hábiles"
+      },
+      fechaRespuesta: {
+        type: Date
+      }
+    },
+    historialEstados: [{
+      estado: {
+        type: String,
+        required: true
+      },
+      fecha: {
+        type: Date,
+        default: Date.now
+      },
+      adminResponsable: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Admin'
+      },
+      observaciones: String
+    }],
+    prioridad: {
+      type: String,
+      enum: ['Baja', 'Media', 'Alta', 'Urgente'],
+      default: 'Media'
     },
     isDeleted: {
       type: Boolean,

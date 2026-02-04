@@ -1780,8 +1780,20 @@
                                     },
                                     "estado": {
                                         "type": "string",
+                                        "enum": ["En revisión", "En proceso", "Atendida", "No procede"],
                                         "description": "Nuevo estado de la denuncia.",
-                                        "example": "En proceso de solución"
+                                        "example": "En proceso"
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "description": "Observaciones sobre el cambio de estado.",
+                                        "example": "Se asignó personal para inspección"
+                                    },
+                                    "prioridad": {
+                                        "type": "string",
+                                        "enum": ["Baja", "Media", "Alta", "Urgente"],
+                                        "description": "Nivel de prioridad de la denuncia.",
+                                        "example": "Alta"
                                     }
                                 },
                                 "required": [
@@ -2619,6 +2631,350 @@
                 }
             }
         },
+        "/admin/asignarPersonal": {
+            "post": {
+                "summary": "Asignar personal municipal a una denuncia",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["denunciaId", "personalId"],
+                                "properties": {
+                                    "denunciaId": {
+                                        "type": "string",
+                                        "description": "ID de la denuncia",
+                                        "example": "6123456789abcdef12345678"
+                                    },
+                                    "personalId": {
+                                        "type": "string",
+                                        "description": "ID del personal municipal",
+                                        "example": "6123456789abcdef12345679"
+                                    },
+                                    "observaciones": {
+                                        "type": "string",
+                                        "description": "Observaciones sobre la asignación",
+                                        "example": "Personal asignado para inspección inicial"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Personal asignado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/StandardResponse"}
+                            }
+                        }
+                    },
+                    "400": {"description": "Error en parámetros"},
+                    "404": {"description": "Denuncia o personal no encontrado"},
+                    "500": {"description": "Error del servidor"}
+                }
+            }
+        },
+        "/admin/respuestaPredeterminada": {
+            "post": {
+                "summary": "Asignar respuesta predeterminada a una denuncia",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["denunciaId", "tipoRespuesta"],
+                                "properties": {
+                                    "denunciaId": {
+                                        "type": "string",
+                                        "description": "ID de la denuncia"
+                                    },
+                                    "tipoRespuesta": {
+                                        "type": "string",
+                                        "enum": ["tiempo_resolucion", "no_procede", "personalizada"],
+                                        "description": "Tipo de respuesta"
+                                    },
+                                    "subtipo": {
+                                        "type": "string",
+                                        "description": "Subtipo de respuesta (rapida, media, larga, etc.)"
+                                    },
+                                    "mensajePersonalizado": {
+                                        "type": "string",
+                                        "description": "Mensaje personalizado"
+                                    },
+                                    "tiempoEstimadoPersonalizado": {
+                                        "type": "string",
+                                        "description": "Tiempo estimado personalizado"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Respuesta asignada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/StandardResponse"}
+                            }
+                        }
+                    },
+                    "400": {"description": "Error en parámetros"},
+                    "404": {"description": "Denuncia no encontrada"},
+                    "500": {"description": "Error del servidor"}
+                }
+            }
+        },
+        "/admin/respuestaPredeterminada/plantillas": {
+            "get": {
+                "summary": "Obtener plantillas de respuestas predeterminadas por categoría",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "categoria",
+                        "schema": {"type": "string"},
+                        "description": "Categoría para filtrar plantillas"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Plantillas obtenidas exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/StandardResponse"}
+                            }
+                        }
+                    },
+                    "404": {"description": "No hay plantillas para esta categoría"},
+                    "500": {"description": "Error del servidor"}
+                }
+            }
+        },
+        "/admin/personal": {
+            "post": {
+                "summary": "Registrar nuevo personal municipal",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["nombreCompleto", "cedula", "cargo", "departamento", "especialidad"],
+                                "properties": {
+                                    "nombreCompleto": {"type": "string", "example": "Juan Pérez"},
+                                    "cedula": {"type": "string", "example": "1234567890"},
+                                    "cargo": {"type": "string", "example": "Inspector de Obras"},
+                                    "departamento": {
+                                        "type": "string",
+                                        "enum": ["Agua Potable y Alcantarillado", "Gestión Ambiental", "Obras Públicas y Movilidad", "Control Urbano y Construcciones"],
+                                        "example": "Obras Públicas y Movilidad"
+                                    },
+                                    "especialidad": {"type": "string", "example": "Infraestructura vial"},
+                                    "telefono": {"type": "string", "example": "0987654321"},
+                                    "email": {"type": "string", "example": "juan.perez@municipio.gob.ec"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Personal registrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/PersonalMunicipal"}
+                            }
+                        }
+                    },
+                    "400": {"description": "Error en parámetros o personal ya existe"},
+                    "500": {"description": "Error del servidor"}
+                }
+            },
+            "get": {
+                "summary": "Obtener lista de personal municipal",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "departamento",
+                        "schema": {"type": "string"},
+                        "description": "Filtrar por departamento"
+                    },
+                    {
+                        "in": "query",
+                        "name": "estado",
+                        "schema": {"type": "string"},
+                        "description": "Filtrar por estado"
+                    },
+                    {
+                        "in": "query",
+                        "name": "disponible",
+                        "schema": {"type": "boolean"},
+                        "description": "Filtrar solo personal activo con pocas asignaciones"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de personal obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer"},
+                                        "status": {"type": "string"},
+                                        "message": {"type": "string"},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {"$ref": "#/components/schemas/PersonalMunicipal"}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {"description": "Error del servidor"}
+                }
+            }
+        },
+        "/admin/personal/{id}": {
+            "get": {
+                "summary": "Obtener detalles de un personal específico",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {"type": "string"},
+                        "description": "ID del personal"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del personal obtenidos exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/PersonalMunicipal"}
+                            }
+                        }
+                    },
+                    "404": {"description": "Personal no encontrado"},
+                    "500": {"description": "Error del servidor"}
+                }
+            },
+            "put": {
+                "summary": "Actualizar información de personal",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {"type": "string"}
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "cargo": {"type": "string"},
+                                    "departamento": {"type": "string"},
+                                    "especialidad": {"type": "string"},
+                                    "telefono": {"type": "string"},
+                                    "email": {"type": "string"},
+                                    "estado": {"type": "string", "enum": ["Activo", "Inactivo", "En comisión", "De vacaciones"]}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Personal actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {"$ref": "#/components/schemas/PersonalMunicipal"}
+                            }
+                        }
+                    },
+                    "404": {"description": "Personal no encontrado"},
+                    "500": {"description": "Error del servidor"}
+                }
+            },
+            "delete": {
+                "summary": "Eliminar (desactivar) personal municipal",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {"type": "string"}
+                    }
+                ],
+                "responses": {
+                    "200": {"description": "Personal eliminado exitosamente"},
+                    "404": {"description": "Personal no encontrado"},
+                    "500": {"description": "Error del servidor"}
+                }
+            }
+        },
+        "/admin/historialDenuncia/{id}": {
+            "get": {
+                "summary": "Obtener historial completo de una denuncia con todos sus cambios",
+                "tags": ["Administrador"],
+                "security": [{"BearerAuth": []}],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {"type": "string"},
+                        "description": "ID de la denuncia"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Historial obtenido exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {"type": "integer"},
+                                        "status": {"type": "string"},
+                                        "message": {"type": "string"},
+                                        "data": {"$ref": "#/components/schemas/HistorialDenuncia"}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {"description": "Denuncia no encontrada"},
+                    "500": {"description": "Error del servidor"}
+                }
+            }
+        },
         "/user/getDetailUser": {
             "get": {
                 "summary": "Obtener detalles del perfil del usuario autenticado",
@@ -3364,6 +3720,257 @@
                     "resetToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
                     "numDenunciasRealizadas": 3,
                     "isBlocked": false
+                }
+            },
+            "PersonalMunicipal": {
+                "type": "object",
+                "required": ["nombreCompleto", "cedula", "cargo", "departamento", "especialidad"],
+                "properties": {
+                    "_id": {
+                        "type": "string",
+                        "description": "ID único del personal"
+                    },
+                    "nombreCompleto": {
+                        "type": "string",
+                        "description": "Nombre completo del personal municipal"
+                    },
+                    "cedula": {
+                        "type": "string",
+                        "description": "Número de cédula único"
+                    },
+                    "cargo": {
+                        "type": "string",
+                        "description": "Cargo o posición del personal"
+                    },
+                    "departamento": {
+                        "type": "string",
+                        "enum": [
+                            "Agua Potable y Alcantarillado",
+                            "Gestión Ambiental",
+                            "Obras Públicas y Movilidad",
+                            "Control Urbano y Construcciones"
+                        ],
+                        "description": "Departamento al que pertenece"
+                    },
+                    "especialidad": {
+                        "type": "string",
+                        "description": "Especialidad técnica del personal"
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "description": "Número de teléfono de contacto"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Correo electrónico de contacto"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "enum": ["Activo", "Inactivo", "En comisión", "De vacaciones"],
+                        "default": "Activo",
+                        "description": "Estado actual del personal"
+                    },
+                    "denunciasAsignadas": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "IDs de denuncias asignadas al personal"
+                    },
+                    "denunciasResueltas": {
+                        "type": "number",
+                        "default": 0,
+                        "description": "Contador de denuncias resueltas por el personal"
+                    },
+                    "calificacionPromedio": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 5,
+                        "description": "Calificación promedio del personal"
+                    },
+                    "fechaIngreso": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha de ingreso al municipio"
+                    }
+                },
+                "example": {
+                    "_id": "6123456789abcdef12345679",
+                    "nombreCompleto": "Juan Pérez González",
+                    "cedula": "1234567890",
+                    "cargo": "Inspector de Obras Públicas",
+                    "departamento": "Obras Públicas y Movilidad",
+                    "especialidad": "Infraestructura vial y bacheo",
+                    "telefono": "0987654321",
+                    "email": "juan.perez@municipio.gob.ec",
+                    "estado": "Activo",
+                    "denunciasAsignadas": ["6123456789abcdef12345678"],
+                    "denunciasResueltas": 45,
+                    "calificacionPromedio": 4.5,
+                    "fechaIngreso": "2023-01-15T00:00:00.000Z"
+                }
+            },
+            "RespuestaPredeterminada": {
+                "type": "object",
+                "properties": {
+                    "tipo": {
+                        "type": "string",
+                        "enum": ["tiempo_resolucion", "no_procede", "personalizada"],
+                        "description": "Tipo de respuesta predeterminada"
+                    },
+                    "mensaje": {
+                        "type": "string",
+                        "description": "Mensaje de respuesta al ciudadano"
+                    },
+                    "tiempoEstimado": {
+                        "type": "string",
+                        "description": "Tiempo estimado de resolución o motivo de no procedencia"
+                    },
+                    "fechaRespuesta": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha en que se asignó la respuesta"
+                    }
+                },
+                "example": {
+                    "tipo": "tiempo_resolucion",
+                    "mensaje": "Su denuncia ha sido recibida y está siendo evaluada. El problema reportado será atendido dentro de las próximas 24-48 horas.",
+                    "tiempoEstimado": "24-48 horas",
+                    "fechaRespuesta": "2026-02-04T10:30:00.000Z"
+                }
+            },
+            "HistorialEstado": {
+                "type": "object",
+                "properties": {
+                    "estado": {
+                        "type": "string",
+                        "description": "Estado de la denuncia en ese momento"
+                    },
+                    "fecha": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha del cambio de estado"
+                    },
+                    "adminResponsable": {
+                        "type": "object",
+                        "properties": {
+                            "nombre": {"type": "string"},
+                            "email": {"type": "string"}
+                        },
+                        "description": "Administrador que realizó el cambio"
+                    },
+                    "observaciones": {
+                        "type": "string",
+                        "description": "Observaciones o notas sobre el cambio"
+                    }
+                }
+            },
+            "HistorialDenuncia": {
+                "type": "object",
+                "properties": {
+                    "denuncia": {
+                        "type": "object",
+                        "properties": {
+                            "id": {"type": "string"},
+                            "titulo": {"type": "string"},
+                            "descripcion": {"type": "string"},
+                            "categoria": {"type": "string"},
+                            "estadoActual": {"type": "string"},
+                            "prioridad": {"type": "string"},
+                            "fechaCreacion": {"type": "string"}
+                        }
+                    },
+                    "denunciante": {
+                        "type": "object",
+                        "properties": {
+                            "nombre": {"type": "string"},
+                            "id": {"type": "string"}
+                        }
+                    },
+                    "personalAsignado": {
+                        "type": "object",
+                        "nullable": true,
+                        "properties": {
+                            "nombre": {"type": "string"},
+                            "cargo": {"type": "string"},
+                            "departamento": {"type": "string"},
+                            "contacto": {
+                                "type": "object",
+                                "properties": {
+                                    "telefono": {"type": "string"},
+                                    "email": {"type": "string"}
+                                }
+                            }
+                        }
+                    },
+                    "respuesta": {
+                        "type": "object",
+                        "nullable": true,
+                        "$ref": "#/components/schemas/RespuestaPredeterminada"
+                    },
+                    "historialEstados": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistorialEstado"
+                        }
+                    },
+                    "ubicacion": {
+                        "type": "object"
+                    },
+                    "evidencia": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "denuncia": {
+                        "id": "6123456789abcdef12345678",
+                        "titulo": "Bache en vía principal",
+                        "descripcion": "Bache grande que causa problemas",
+                        "categoria": "Movilidad Urbana: Bacheo de Calles, Frecuencias, Obstrucciones de aceras, etc.",
+                        "estadoActual": "En proceso",
+                        "prioridad": "Alta",
+                        "fechaCreacion": "04/02/2026"
+                    },
+                    "denunciante": {
+                        "nombre": "María González",
+                        "id": "6123456789abcdef12345677"
+                    },
+                    "personalAsignado": {
+                        "nombre": "Juan Pérez González",
+                        "cargo": "Inspector de Obras Públicas",
+                        "departamento": "Obras Públicas y Movilidad",
+                        "contacto": {
+                            "telefono": "0987654321",
+                            "email": "juan.perez@municipio.gob.ec"
+                        }
+                    },
+                    "respuesta": {
+                        "tipo": "tiempo_resolucion",
+                        "mensaje": "Equipo de obras públicas ha sido notificado. Intervención estimada en 2-3 días hábiles.",
+                        "tiempoEstimado": "2-3 días hábiles",
+                        "fechaRespuesta": "2026-02-04T10:30:00.000Z"
+                    },
+                    "historialEstados": [
+                        {
+                            "estado": "En revisión",
+                            "fecha": "2026-02-04T09:00:00.000Z",
+                            "admin": {
+                                "nombre": "Admin Principal",
+                                "email": "admin@municipio.gob.ec"
+                            },
+                            "observaciones": "Denuncia recibida"
+                        },
+                        {
+                            "estado": "En proceso",
+                            "fecha": "2026-02-04T10:30:00.000Z",
+                            "admin": {
+                                "nombre": "Admin Principal",
+                                "email": "admin@municipio.gob.ec"
+                            },
+                            "observaciones": "Personal asignado: Juan Pérez González"
+                        }
+                    ]
                 }
             }
         }

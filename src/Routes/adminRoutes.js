@@ -11,6 +11,10 @@ const getUser = require('./adminRoutes/getUser');
 const addAdmin = require('./adminRoutes/addAdmin');
 const loginAdmin = require('./adminRoutes/loginAdmin');
 const veirifyAdmin = require('./adminRoutes/verifyAdmin');
+const asignarPersonal = require('./adminRoutes/asignarPersonal');
+const respuestaPredeterminada = require('./adminRoutes/respuestaPredeterminada');
+const gestionPersonal = require('./adminRoutes/gestionPersonal');
+const historialDenuncia = require('./adminRoutes/historialDenuncia');
 
 router.use('/changeStatusUser', statusUser);
 router.use('/deleteDenuncia', deleteDenuncia);
@@ -22,5 +26,9 @@ router.use('/getUser', getUser);
 router.use('/addAdmin', addAdmin);
 router.use('/loginAdmin', loginAdmin);
 router.use('/verifyAdmin', veirifyAdmin);
+router.use('/asignarPersonal', asignarPersonal);
+router.use('/respuestaPredeterminada', respuestaPredeterminada);
+router.use('/personal', gestionPersonal);
+router.use('/historialDenuncia', historialDenuncia);
 
 module.exports = router;

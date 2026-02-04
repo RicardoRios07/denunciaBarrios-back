@@ -1,4 +1,11 @@
-# 👥 Script de Creación de Usuarios de Prueba
+# � Scripts de Utilidad
+
+Este directorio contiene scripts útiles para desarrollo, testing y mantenimiento de la aplicación.
+
+## 📜 Scripts Disponibles
+
+### 1. 👥 Creación de Usuarios de Prueba
+**Archivo:** `createTestUsers.js`
 
 Este script crea automáticamente usuarios de prueba para desarrollo y testing de la API.
 
@@ -17,6 +24,50 @@ Este script crea automáticamente usuarios de prueba para desarrollo y testing d
 - **Password:** `admin123`
 - **Nombre:** Admin Principal
 - **Estado:** Verificado y activo
+
+---
+
+### 2. 👷 Creación de Personal Municipal de Prueba
+**Archivo:** `createTestPersonal.js`
+
+Crea personal municipal de prueba para diferentes departamentos.
+
+**Ejecutar con:**
+```bash
+node scripts/createTestPersonal.js
+```
+
+**Personal creado:**
+- 8 funcionarios de diferentes departamentos
+- Incluye: inspectores, técnicos, ingenieros, coordinadores
+- Departamentos: Obras Públicas, Gestión Ambiental, Agua y Alcantarillado, Control Urbano
+
+---
+
+### 3. 🔄 Migración de Denuncias (Nuevos Campos)
+**Archivo:** `migrateDenunciasNuevosCampos.js`
+
+Actualiza denuncias existentes con los nuevos campos implementados (prioridad, historial, etc.)
+
+**Ejecutar con:**
+```bash
+node scripts/migrateDenunciasNuevosCampos.js
+```
+
+**Funciones:**
+- Agrega campo de prioridad (default: 'Media')
+- Crea historial inicial de estados
+- Muestra estadísticas de migración
+- No duplica datos ya existentes
+
+---
+
+### 4. 📍 Migración de Ubicación
+**Archivo:** `migrateUbicacion.js`
+
+Migra el formato de ubicación en denuncias existentes.
+
+---
 
 ## 🚀 Uso del Script
 
