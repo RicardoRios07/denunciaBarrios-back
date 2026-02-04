@@ -2,10 +2,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 // Conexión a Base de datos
-const uri = `mongodb://localhost:27017/barrios`;
-// console.log('PASS',process.env.PASSWORD);
-// console.log('USEERNAME MONGO',process.env.USER_MONGO);
-
+const uri = process.env.MONGODB_URI || `mongodb://localhost:27017/barrios`;
 
 mongoose
     .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
