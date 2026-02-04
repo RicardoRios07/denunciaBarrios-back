@@ -1,0 +1,3371 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Denuncias en Barrios",
+        "version": "1.0.0",
+        "description": "API REST completa para la gestión de denuncias ciudadanas en barrios. Incluye autenticación, gestión de usuarios, administración de denuncias, panel de administración y dashboard con estadísticas.",
+        "contact": {
+            "name": "Soporte API",
+            "email": "soporte@denunciabarrios.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://172.208.72.155:3085",
+            "description": "Servidor de desarrollo"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Endpoints de autenticación y gestión de cuentas de usuario"
+        },
+        {
+            "name": "Denuncias",
+            "description": "Endpoints para la gestión de denuncias ciudadanas"
+        },
+        {
+            "name": "Administrador",
+            "description": "Endpoints exclusivos para administradores del sistema"
+        },
+        {
+            "name": "Usuario",
+            "description": "Endpoints para la gestión de perfil de usuario"
+        },
+        {
+            "name": "Dashboard",
+            "description": "Endpoints para estadísticas y métricas del sistema"
+        }
+    ],
+    "paths": {
+        "0": {
+            "0": "/"
+        },
+        "1": {
+            "0": "*"
+        },
+        "2": {
+            "0": "*"
+        },
+        "/auth/login": {
+            "post": {
+                "summary": "Iniciar sesión de usuario",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuario autenticado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Contraseña no válida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Usuario bloqueado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/newPassword": {
+            "post": {
+                "summary": "Cambiar la contraseña del usuario.",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "resetToken": {
+                                        "type": "string"
+                                    },
+                                    "newPassword": {
+                                        "type": "string"
+                                    }
+                                },
+                                "example": {
+                                    "resetToken": "your_reset_token_here",
+                                    "newPassword": "new_password_here"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cambio de contraseña exitoso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "example": {
+                                        "code": 200,
+                                        "status": "success",
+                                        "message": "Cambio de contraseña exitoso",
+                                        "data": {}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La nueva contraseña no puede estar vacía.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "example": {
+                                        "code": 400,
+                                        "status": "error",
+                                        "message": "La nueva contraseña no puede estar vacía",
+                                        "data": {}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "example": {
+                                        "code": 404,
+                                        "status": "error",
+                                        "message": "Usuario no encontrado",
+                                        "data": {}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error al restablecer la contraseña.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "example": {
+                                        "code": 500,
+                                        "status": "error",
+                                        "message": "Error al restablecer la contraseña",
+                                        "data": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/passwordRecovery": {
+            "post": {
+                "summary": "Enviar correo electrónico para recuperar contraseña.",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "cedula": {
+                                        "type": "string"
+                                    }
+                                },
+                                "example": {
+                                    "cedula": "1234567890"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Se ha enviado un correo electrónico para restablecer la contraseña.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "code": 200,
+                                    "status": "success",
+                                    "message": "Se ha enviado un correo electrónico para restablecer la contraseña",
+                                    "data": {
+                                        "token": "your_reset_token_here"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La cédula no puede estar vacía.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "code": 400,
+                                    "status": "error",
+                                    "message": "La cédula no puede estar vacía",
+                                    "data": {}
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "code": 404,
+                                    "status": "error",
+                                    "message": "Usuario no encontrado",
+                                    "data": {}
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error al recuperar la contraseña.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "code": 500,
+                                    "status": "error",
+                                    "message": "Error al recuperar la contraseña",
+                                    "data": {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "summary": "Registrar un nuevo usuario",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nombreCompleto": {
+                                        "type": "string",
+                                        "minLength": 6,
+                                        "maxLength": 255
+                                    },
+                                    "cedula": {
+                                        "type": "string",
+                                        "minLength": 6,
+                                        "maxLength": 10
+                                    },
+                                    "numTelefono": {
+                                        "type": "string",
+                                        "minLength": 6,
+                                        "maxLength": 10
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "minLength": 6,
+                                        "maxLength": 1024
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 6
+                                    },
+                                    "photo": {
+                                        "type": "string",
+                                        "minLength": 6,
+                                        "maxLength": 1024
+                                    }
+                                },
+                                "required": [
+                                    "nombreCompleto",
+                                    "cedula",
+                                    "numTelefono",
+                                    "email",
+                                    "password"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuario registrado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error al guardar el usuario en la base de datos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/verifyUser": {
+            "post": {
+                "summary": "Verifica la cuenta de un usuario.",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "verificationToken": {
+                                        "type": "string"
+                                    }
+                                },
+                                "example": {
+                                    "verificationToken": "your_verification_token_here"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cuenta verificada correctamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Token de verificación no proporcionado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Token inválido o expirado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error al verificar la cuenta.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/denuncias/eliminarDenuncia": {
+            "post": {
+                "summary": "Marca una denuncia como eliminada.",
+                "tags": [
+                    "Denuncias"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "denunciaId": {
+                                        "type": "string",
+                                        "description": "ID de la denuncia a marcar como eliminada.",
+                                        "example": "613e489aeb037263d4d091ab"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Denuncia marcada como eliminada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en la solicitud del cliente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Denuncia no encontrada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al marcar la denuncia como eliminada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/denuncias/getAllDenuncias": {
+            "get": {
+                "summary": "Obtiene todas las denuncias almacenadas en la base de datos.",
+                "tags": [
+                    "Denuncias"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna un arreglo de denuncias.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Denuncia"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontraron denuncias.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error al obtener las denuncias.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/denuncias/getDenunciasUser": {
+            "get": {
+                "summary": "Obtiene todas las denuncias realizadas por el usuario autenticado.",
+                "tags": [
+                    "Denuncias"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna un arreglo de denuncias realizadas por el usuario.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Denuncia"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado o el usuario no ha presentado denuncias.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al obtener las denuncias.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/denuncias/getDetailDenuncia": {
+            "post": {
+                "summary": "Ver detalles de una denuncia por su ID.",
+                "tags": [
+                    "Denuncias"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "_id": {
+                                        "type": "string",
+                                        "description": "ID de la denuncia a consultar.",
+                                        "example": "6123456789abcdef12345678"
+                                    }
+                                },
+                                "required": [
+                                    "_id"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Detalles de la denuncia obtenidos exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detalles de la denuncia obtenidos exitosamente."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Denuncia"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en la solicitud del cliente o denuncia no encontrada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Denuncia no encontrada."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No se proporcionó un token de autenticación válido.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Acceso no autorizado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al obtener los detalles de la denuncia.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al obtener los detalles de la denuncia."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/denuncias/nuevaDenuncia": {
+            "post": {
+                "summary": "Crea una nueva denuncia.",
+                "tags": [
+                    "Denuncias"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "tituloDenuncia": {
+                                        "type": "string",
+                                        "description": "Título de la denuncia.",
+                                        "example": "Denuncia de contaminación en parque público."
+                                    },
+                                    "descripcion": {
+                                        "type": "string",
+                                        "description": "Descripción detallada de la denuncia.",
+                                        "example": "Existe contaminación del agua en el parque cercano a mi casa."
+                                    },
+                                    "evidencia": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Imagen de evidencia adjunta."
+                                    },
+                                    "ubicacion": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "description": "Tipo de ubicación, siempre debe ser \"Point\".",
+                                                "example": "Point"
+                                            },
+                                            "coordinates": {
+                                                "type": "array",
+                                                "description": "Coordenadas de la ubicación [longitud, latitud].",
+                                                "items": {
+                                                    "type": "number"
+                                                },
+                                                "example": [
+                                                    -77.12345,
+                                                    12.34567
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "description": "Estado actual de la denuncia.",
+                                        "example": "Pendiente"
+                                    },
+                                    "categoria": {
+                                        "type": "string",
+                                        "description": "Categoría de la denuncia.",
+                                        "enum": [
+                                            "Agua Potable, Alcantarillado Sanitario, Alcantarillado Pluvial",
+                                            "Recolección de Desechos y Saneamiento Ambiental",
+                                            "Movilidad Urbana: Bacheo de Calles, Frecuencias, Obstrucciones de aceras, etc.",
+                                            "Obstrucción de vías por construcciones, ornato, permisos de construcción"
+                                        ],
+                                        "example": "Agua Potable"
+                                    }
+                                },
+                                "required": [
+                                    "tituloDenuncia",
+                                    "descripcion",
+                                    "evidencia",
+                                    "ubicacion",
+                                    "categoria"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Denuncia creada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Denuncia"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en la solicitud del cliente o ya has presentado una denuncia con el mismo título.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No se proporcionó un token de autenticación válido.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró el usuario en la base de datos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al crear la denuncia.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/addAdmin": {
+            "post": {
+                "summary": "Añade un nuevo administrador.",
+                "tags": [
+                    "Administrador"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nombreCompleto": {
+                                        "type": "string",
+                                        "description": "Nombre completo del administrador."
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "description": "Dirección de correo electrónico del administrador."
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "description": "Contraseña del administrador."
+                                    }
+                                },
+                                "example": {
+                                    "nombreCompleto": "Administrador Nuevo",
+                                    "email": "adminnuevo@example.com",
+                                    "password": "password123"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Administrador añadido exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Administrador añadido exitosamente."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "adminId": {
+                                                    "type": "string",
+                                                    "example": "6123456789abcdef12345678"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitud incorrecta, ya sea por datos faltantes o administrador existente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ya existe un administrador con ese correo electrónico."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al agregar un administrador."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/deleteDenuncia": {
+            "post": {
+                "summary": "Eliminar una denuncia por su ID mediante un método POST.",
+                "tags": [
+                    "Administrador"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "ID de la denuncia a eliminar.",
+                                        "example": "6123456789abcdef12345678"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Denuncia eliminada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Denuncia eliminada exitosamente."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitud incorrecta, denuncia no encontrada o ID no proporcionado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Denuncia no encontrada o ID no proporcionado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No se proporcionó un token de autenticación válido.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Acceso no autorizado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al eliminar la denuncia.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al eliminar la denuncia."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/detallesDenuncia": {
+            "post": {
+                "summary": "Ver detalles de una denuncia por su ID.",
+                "tags": [
+                    "Administrador"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "_id": {
+                                        "type": "string",
+                                        "description": "ID de la denuncia a consultar.",
+                                        "example": "6123456789abcdef12345678"
+                                    }
+                                },
+                                "required": [
+                                    "_id"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Detalles de la denuncia obtenidos exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detalles de la denuncia obtenidos exitosamente."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Denuncia"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en la solicitud del cliente o denuncia no encontrada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Denuncia no encontrada."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No se proporcionó un token de autenticación válido.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Acceso no autorizado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al obtener los detalles de la denuncia.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al obtener los detalles de la denuncia."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/estadoDenuncia": {
+            "post": {
+                "summary": "Modificar el estado de una denuncia por su ID.",
+                "tags": [
+                    "Administrador"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "_id": {
+                                        "type": "string",
+                                        "description": "ID de la denuncia a modificar.",
+                                        "example": "6123456789abcdef12345678"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "description": "Nuevo estado de la denuncia.",
+                                        "example": "En proceso de solución"
+                                    }
+                                },
+                                "required": [
+                                    "_id",
+                                    "estado"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Estado de la denuncia modificado exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Estado de la denuncia modificado exitosamente."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en la solicitud del cliente o denuncia no encontrada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Denuncia no encontrada o parámetros faltantes."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No se proporcionó un token de autenticación válido.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Acceso no autorizado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al modificar el estado de la denuncia.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al modificar el estado de la denuncia."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/getAllDenuncias": {
+            "post": {
+                "summary": "Ver todas las denuncias.",
+                "tags": [
+                    "Administrador"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de todas las denuncias obtenida exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lista de todas las denuncias obtenida exitosamente."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Denuncia"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No se proporcionó un token de autenticación válido.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Acceso no autorizado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al obtener las denuncias.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al obtener las denuncias."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/getAllUsers": {
+            "post": {
+                "summary": "Obtener todas las cuentas de usuario registradas.",
+                "tags": [
+                    "Administrador"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de todas las cuentas de usuario obtenida exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lista de todas las cuentas de usuario obtenida exitosamente."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No se proporcionó un token de autenticación válido.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Acceso no autorizado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al obtener las cuentas de usuario.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al obtener las cuentas de usuario."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/getUser": {
+            "post": {
+                "summary": "Obtener detalles de un usuario por su ID.",
+                "tags": [
+                    "Administrador"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "_id": {
+                                        "type": "string",
+                                        "description": "ID del usuario a consultar."
+                                    }
+                                },
+                                "example": {
+                                    "_id": "123456789"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Detalles del usuario obtenidos exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detalles del usuario obtenidos exitosamente."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Usuario no encontrado o ID de usuario faltante.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuario no encontrado o ID de usuario faltante."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al obtener los detalles del usuario.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al obtener los detalles del usuario."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/loginAdmin": {
+            "post": {
+                "summary": "Inicia sesión como administrador.",
+                "tags": [
+                    "Administrador"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "description": "Dirección de correo electrónico del administrador."
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "description": "Contraseña del administrador."
+                                    }
+                                },
+                                "example": {
+                                    "email": "admin@example.com",
+                                    "password": "password123"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inicio de sesión exitoso. Se proporciona el token de autenticación.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Inicio de sesión exitoso."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "description": "Token de autenticación del administrador."
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciales inválidas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credenciales inválidas."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al autenticar al administrador.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al autenticar al administrador."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/changeStatusUser": {
+            "post": {
+                "summary": "Bloquear o desbloquear una cuenta de usuario por su ID.",
+                "tags": [
+                    "Administrador"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "_id": {
+                                        "type": "string",
+                                        "description": "ID del usuario a bloquear o desbloquear."
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "description": "Estado deseado para la cuenta del usuario ('block' o 'unblock')."
+                                    }
+                                },
+                                "example": {
+                                    "_id": "123456789",
+                                    "status": "block"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Estado de la cuenta de usuario actualizado correctamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cuenta de usuario bloqueada/desbloqueada correctamente."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "_id": {
+                                                    "type": "string"
+                                                },
+                                                "isBlocked": {
+                                                    "type": "boolean"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No se proporcionó un token de autenticación válido.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Acceso no autorizado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Usuario no encontrado."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor al actualizar el estado de la cuenta de usuario.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error del servidor al actualizar el estado de la cuenta de usuario."
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/verifyAdmin/{token}": {
+            "post": {
+                "summary": "Verifica la cuenta de un administrador.",
+                "tags": [
+                    "Administrador"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "verificationToken": {
+                                        "type": "string"
+                                    }
+                                },
+                                "example": {
+                                    "verificationToken": "your_verification_token_here"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cuenta verificada correctamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Token de verificación no proporcionado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Token inválido o expirado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error al verificar la cuenta.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/getDetailUser": {
+            "get": {
+                "summary": "Obtener detalles del perfil del usuario autenticado",
+                "tags": [
+                    "Usuario"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del usuario obtenidos exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User retrieved successfully."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token de autenticación inválido o ausente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error del servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Token JWT de autenticación de usuario"
+            },
+            "AdminAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "auth-admin",
+                "description": "Token JWT de autenticación de administrador"
+            }
+        },
+        "schemas": {
+            "StandardResponse": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "description": "Código de estado HTTP",
+                        "example": 200
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Estado de la respuesta",
+                        "example": "success"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Mensaje descriptivo",
+                        "example": "Operación exitosa"
+                    },
+                    "data": {
+                        "type": "object",
+                        "description": "Datos de la respuesta",
+                        "properties": {
+                            "token": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "description": "Código de error HTTP",
+                        "example": 400
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Estado del error",
+                        "example": "error"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Mensaje de error",
+                        "example": "Error en la operación"
+                    },
+                    "error": {
+                        "type": "string",
+                        "description": "Detalle del error",
+                        "example": "Campo requerido faltante"
+                    },
+                    "data": {
+                        "type": "object"
+                    }
+                }
+            },
+            "LoginInput": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Correo electrónico del usuario",
+                        "example": "usuario@example.com",
+                        "minLength": 6,
+                        "maxLength": 255
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "description": "Contraseña del usuario",
+                        "example": "password123",
+                        "minLength": 6,
+                        "maxLength": 1024
+                    }
+                }
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Usuario autenticado exitosamente"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "token": {
+                                "type": "string",
+                                "description": "Token JWT para autenticación",
+                                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                            },
+                            "user": {
+                                "type": "object",
+                                "properties": {
+                                    "_id": {
+                                        "type": "string",
+                                        "example": "611d4d25db48de5f8c18e4e1"
+                                    },
+                                    "nombreCompleto": {
+                                        "type": "string",
+                                        "example": "Juan Pérez"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "usuario@example.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "RegisterInput": {
+                "type": "object",
+                "required": [
+                    "nombreCompleto",
+                    "cedula",
+                    "numTelefono",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "nombreCompleto": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 255,
+                        "description": "Nombre completo del usuario",
+                        "example": "Juan Pérez García"
+                    },
+                    "cedula": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 10,
+                        "description": "Número de cédula del usuario",
+                        "example": 1234567890
+                    },
+                    "numTelefono": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 10,
+                        "description": "Número de teléfono del usuario",
+                        "example": 987654321
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 6,
+                        "maxLength": 255,
+                        "description": "Correo electrónico del usuario",
+                        "example": "usuario@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 1024,
+                        "description": "Contraseña del usuario",
+                        "example": "password123"
+                    },
+                    "photo": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "Foto de perfil del usuario (opcional)"
+                    }
+                }
+            },
+            "PasswordRecoveryInput": {
+                "type": "object",
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Correo electrónico del usuario",
+                        "example": "usuario@example.com"
+                    }
+                }
+            },
+            "NewPasswordInput": {
+                "type": "object",
+                "required": [
+                    "newPassword"
+                ],
+                "properties": {
+                    "newPassword": {
+                        "type": "string",
+                        "minLength": 6,
+                        "description": "Nueva contraseña del usuario",
+                        "example": "newPassword123"
+                    }
+                }
+            },
+            "Ubicacion": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "coordinates"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "Point"
+                        ],
+                        "description": "Tipo de ubicación GeoJSON",
+                        "example": "Point"
+                    },
+                    "coordinates": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        },
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "description": "Coordenadas [longitud, latitud]",
+                        "example": [
+                            -78.4678,
+                            -0.1807
+                        ]
+                    }
+                }
+            },
+            "DenunciaInput": {
+                "type": "object",
+                "required": [
+                    "tituloDenuncia",
+                    "descripcion",
+                    "evidencia",
+                    "ubicacion",
+                    "categoria"
+                ],
+                "properties": {
+                    "tituloDenuncia": {
+                        "type": "string",
+                        "description": "Título de la denuncia",
+                        "example": "Fuga de agua en la calle principal"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "description": "Descripción detallada de la denuncia",
+                        "example": "Existe una fuga de agua potable en la calle principal desde hace 3 días"
+                    },
+                    "evidencia": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "Imagen de evidencia"
+                    },
+                    "ubicacion": {
+                        "type": "string",
+                        "description": "Ubicación en formato JSON stringificado con type y coordinates",
+                        "example": "{\"type\":\"Point\",\"coordinates\":[-78.4678,-0.1807]}"
+                    },
+                    "categoria": {
+                        "type": "string",
+                        "enum": [
+                            "Agua Potable, Alcantarillado Sanitario, Alcantarillado Pluvial",
+                            "Recolección de Desechos y Saneamiento Ambiental",
+                            {
+                                "Movilidad Urbana": "Bacheo de Calles, Frecuencias, Obstrucciones de aceras, etc."
+                            },
+                            "Obstrucción de vías por construcciones, ornato, permisos de construcción"
+                        ],
+                        "description": "Categoría de la denuncia",
+                        "example": "Agua Potable, Alcantarillado Sanitario, Alcantarillado Pluvial"
+                    }
+                }
+            },
+            "DenunciaResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Denuncia"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "_id": {
+                                "type": "string",
+                                "description": "ID de la denuncia",
+                                "example": "611d4d25db48de5f8c18e4e1"
+                            }
+                        }
+                    }
+                ]
+            },
+            "EstadoDenunciaInput": {
+                "type": "object",
+                "required": [
+                    "estado"
+                ],
+                "properties": {
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "En revisión",
+                            "En proceso",
+                            "Atendida"
+                        ],
+                        "description": "Nuevo estado de la denuncia",
+                        "example": "En proceso"
+                    }
+                }
+            },
+            "AdminInput": {
+                "type": "object",
+                "required": [
+                    "nombreCompleto",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "nombreCompleto": {
+                        "type": "string",
+                        "description": "Nombre completo del administrador",
+                        "example": "Admin Principal"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Correo electrónico del administrador",
+                        "example": "admin@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 6,
+                        "description": "Contraseña del administrador",
+                        "example": "adminPassword123"
+                    }
+                }
+            },
+            "UserStatusInput": {
+                "type": "object",
+                "required": [
+                    "isBlocked"
+                ],
+                "properties": {
+                    "isBlocked": {
+                        "type": "boolean",
+                        "description": "Estado de bloqueo del usuario",
+                        "example": true
+                    }
+                }
+            },
+            "DashboardStats": {
+                "type": "object",
+                "properties": {
+                    "totalDenuncias": {
+                        "type": "integer",
+                        "description": "Total de denuncias en el sistema",
+                        "example": 150
+                    },
+                    "denunciasEnRevision": {
+                        "type": "integer",
+                        "description": "Denuncias en estado de revisión",
+                        "example": 45
+                    },
+                    "denunciasEnProceso": {
+                        "type": "integer",
+                        "description": "Denuncias en proceso de atención",
+                        "example": 65
+                    },
+                    "denunciasAtendidas": {
+                        "type": "integer",
+                        "description": "Denuncias atendidas",
+                        "example": 40
+                    },
+                    "totalUsuarios": {
+                        "type": "integer",
+                        "description": "Total de usuarios registrados",
+                        "example": 320
+                    },
+                    "usuariosActivos": {
+                        "type": "integer",
+                        "description": "Usuarios activos (no bloqueados)",
+                        "example": 300
+                    },
+                    "usuariosBloqueados": {
+                        "type": "integer",
+                        "description": "Usuarios bloqueados",
+                        "example": 20
+                    },
+                    "denunciasPorCategoria": {
+                        "type": "object",
+                        "description": "Distribución de denuncias por categoría",
+                        "additionalProperties": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            },
+            "Admin": {
+                "type": "object",
+                "required": [
+                    "nombreCompleto",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "nombreCompleto": {
+                        "type": "string",
+                        "description": "Nombre completo del administrador."
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Dirección de correo electrónico del administrador. Debe ser única."
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Contraseña del administrador. Mínimo 6 caracteres."
+                    },
+                    "isVerified": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Indica si el administrador ha verificado su cuenta."
+                    },
+                    "isDeleted": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Indica si el administrador ha sido marcado como eliminado."
+                    },
+                    "verificationToken": {
+                        "type": "string",
+                        "description": "Token utilizado para la verificación de la cuenta del administrador."
+                    }
+                },
+                "example": {
+                    "nombreCompleto": "Juan Pérez",
+                    "email": "juan@example.com",
+                    "password": "password123",
+                    "isVerified": false,
+                    "isDeleted": false,
+                    "verificationToken": "123456abcdef"
+                }
+            },
+            "Denuncia": {
+                "type": "object",
+                "required": [
+                    "tituloDenuncia",
+                    "idDenunciante",
+                    "nombreDenunciante",
+                    "descripcion",
+                    "evidencia",
+                    "ubicacion",
+                    "categoria"
+                ],
+                "properties": {
+                    "tituloDenuncia": {
+                        "type": "string",
+                        "description": "Título de la denuncia.",
+                        "example": "Denuncia de contaminación en parque público."
+                    },
+                    "idDenunciante": {
+                        "type": "string",
+                        "description": "ID del denunciante.",
+                        "example": "611d4d25db48de5f8c18e4e1"
+                    },
+                    "nombreDenunciante": {
+                        "type": "string",
+                        "description": "Nombre del denunciante.",
+                        "example": "Juanito Pérez"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "description": "Descripción detallada de la denuncia.",
+                        "example": "Existe contaminación del agua en el parque cercano a mi casa."
+                    },
+                    "evidencia": {
+                        "type": "string",
+                        "description": "URL de la evidencia adjunta (imagen, video, etc.).",
+                        "example": "https://ejemplo.com/evidencia.jpg"
+                    },
+                    "ubicacion": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "description": "Tipo de ubicación, siempre debe ser \"Point\".",
+                                "example": "Point"
+                            },
+                            "coordenadas": {
+                                "type": "array",
+                                "description": "Coordenadas de la ubicación [longitud, latitud].",
+                                "items": {
+                                    "type": "number"
+                                },
+                                "example": [
+                                    -77.12345,
+                                    12.34567
+                                ]
+                            }
+                        },
+                        "description": "Información de ubicación de la denuncia (GPS)."
+                    },
+                    "categoria": {
+                        "type": "string",
+                        "description": "Categoría de la denuncia.",
+                        "enum": [
+                            "Seguridad",
+                            "Infraestructura",
+                            "Contaminacion",
+                            "Ruido",
+                            "Otro"
+                        ],
+                        "example": "Contaminacion"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "description": "Estado actual de la denuncia.",
+                        "enum": [
+                            "En revisión",
+                            "En proceso de solución",
+                            "Solucionada"
+                        ],
+                        "example": "En revisión"
+                    },
+                    "isDeleted": {
+                        "type": "boolean",
+                        "description": "Indica si la denuncia ha sido eliminada por el usuario.",
+                        "default": false
+                    },
+                    "fechaHora": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha y hora de creación de la denuncia.",
+                        "example": "2023-07-29T12:34:56Z"
+                    }
+                },
+                "example": {
+                    "tituloDenuncia": "Denuncia de contaminación en parque público.",
+                    "idDenunciante": "611d4d25db48de5f8c18e4e1",
+                    "nombreDenunciante": "Juanito Pérez",
+                    "descripcion": "Existe contaminación del agua en el parque cercano a mi casa.",
+                    "evidencia": "https://ejemplo.com/evidencia.jpg",
+                    "ubicacion": {
+                        "type": "Point",
+                        "coordenadas": [
+                            -77.12345,
+                            12.34567
+                        ]
+                    },
+                    "categoria": "Contaminacion",
+                    "estado": "En revisión",
+                    "isDeleted": false,
+                    "fechaHora": "2023-07-29T12:34:56Z"
+                }
+            },
+            "User": {
+                "type": "object",
+                "required": [
+                    "nombreCompleto",
+                    "cedula",
+                    "numTelefono",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "nombreCompleto": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 255,
+                        "description": "Nombre completo del usuario."
+                    },
+                    "cedula": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 10,
+                        "description": "Número de cédula del usuario."
+                    },
+                    "numTelefono": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 10,
+                        "description": "Número de teléfono del usuario."
+                    },
+                    "email": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 255,
+                        "description": "Dirección de correo electrónico del usuario."
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 6,
+                        "description": "Contraseña del usuario."
+                    },
+                    "photo": {
+                        "type": "string",
+                        "description": "URL de la foto de perfil del usuario (opcional)."
+                    },
+                    "isVerified": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Estado de verificación del usuario."
+                    },
+                    "verificationToken": {
+                        "type": "string",
+                        "description": "Token de verificación del usuario."
+                    },
+                    "resetToken": {
+                        "type": "string",
+                        "description": "Token de restablecimiento de contraseña del usuario."
+                    },
+                    "numDenunciasRealizadas": {
+                        "type": "number",
+                        "default": 0,
+                        "description": "Número de denuncias realizadas por el usuario."
+                    },
+                    "isBlocked": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Estado de bloqueo del usuario."
+                    }
+                },
+                "example": {
+                    "nombreCompleto": "Juanito Alimaña",
+                    "cedula": 12345678,
+                    "numTelefono": 98765432,
+                    "email": "juanito@example.com",
+                    "password": "password123",
+                    "photo": "https://example.com/profile.jpg",
+                    "isVerified": true,
+                    "verificationToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "resetToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "numDenunciasRealizadas": 3,
+                    "isBlocked": false
+                }
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 // Conexión a Base de datos
-const uri = `mongodb+srv://${process.env.USER_MONGO}:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/barrios`;
+const uri = `mongodb://localhost:27017/barrios`;
 // console.log('PASS',process.env.PASSWORD);
 // console.log('USEERNAME MONGO',process.env.USER_MONGO);
 

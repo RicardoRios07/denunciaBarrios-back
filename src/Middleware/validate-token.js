@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {
+    // logger.warn
     const bearerHeader = req.header('Authorization');
     if (!bearerHeader) return res.status(401).json({ error: 'Acceso denegado.' });
 

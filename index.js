@@ -74,23 +74,71 @@ const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Backend de Denuncias en Barrios',
+            title: 'API Denuncias en Barrios',
             version: '1.0.0',
-            description: 'Documentación de la API para Denuncias en Barrios',
+            description: 'API REST completa para la gestión de denuncias ciudadanas en barrios. Incluye autenticación, gestión de usuarios, administración de denuncias, panel de administración y dashboard con estadísticas.',
+            contact: {
+                name: 'Soporte API',
+                email: 'soporte@denunciabarrios.com'
+            },
+            license: {
+                name: 'MIT',
+                url: 'https://opensource.org/licenses/MIT'
+            }
         },
         servers: [
             {
                 url: `http://${process.env.IP_SERVER}:${process.env.PORT}`,
-                // url: `https://localhost:${process.env.PORT}`,
+                description: 'Servidor de desarrollo'
             },
         ],
+        tags: [
+            {
+                name: 'Auth',
+                description: 'Endpoints de autenticación y gestión de cuentas de usuario'
+            },
+            {
+                name: 'Denuncias',
+                description: 'Endpoints para la gestión de denuncias ciudadanas'
+            },
+            {
+                name: 'Administrador',
+                description: 'Endpoints exclusivos para administradores del sistema'
+            },
+            {
+                name: 'Usuario',
+                description: 'Endpoints para la gestión de perfil de usuario'
+            },
+            {
+                name: 'Dashboard',
+                description: 'Endpoints para estadísticas y métricas del sistema'
+            }
+        ]
     },
-    apis: ['./src/Routes/Authentication/*.js', './src/Routes/denunciaRoutes/*.js', './src/Routes/adminRoutes/*.js', './src/Models/*.js'],
+    apis: [
+        './src/swagger/*.js',
+        './src/Routes/Authentication/*.js', 
+        './src/Routes/denunciaRoutes/*.js', 
+        './src/Routes/adminRoutes/*.js',
+        './src/Routes/userRoutes/*.js',
+        './src/Controllers/*.js',
+        './src/Models/*.js'
+    ],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Ruta para UI de Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'API Denuncias Barrios - Documentación'
+}));
+
+// Ruta para exportar el archivo openapi.json
+app.get('/api-docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+});
 
 // Iniciar servidor
 const PORT = process.env.PORT;

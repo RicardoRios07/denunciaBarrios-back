@@ -26,10 +26,17 @@ const denunciaSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
+    // GeoJSON Point: { type: 'Point', coordinates: [lng, lat] }
     ubicacion: {
-      type: String,
-      required: true,
-      trim: true,
+      type: {
+        type: String,
+        enum: ['Point'],
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
     },
     categoria: {
       type: String,

@@ -189,7 +189,36 @@ router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
         if (error) {
             return sendResponse(res, 400, {}, error.details[0].message);
         }
+        // Parse and normalize ubicacion into GeoJSON Point { type: 'Point', coordinates: [lng, lat] }
+        let ubicacionRaw = req.body.ubicacion || value.ubicacion;
+        let ubicGeo;
+        if (!ubicacionRaw) {
+            return sendResponse(res, 400, {}, 'ubicacion es requerida');
+        }
+        if (typeof ubicacionRaw === 'string') {
+            try {
+                ubicacionRaw = JSON.parse(ubicacionRaw);
+            } catch (err) {
+                return sendResponse(res, 400, {}, 'ubicacion inválida: debe ser un JSON con lat y lng');
+            }
+        }
 
+        // Support objects like { lat, lng } or GeoJSON-like { type, coordinates }
+        let lat, lng;
+        if (ubicacionRaw.type && Array.isArray(ubicacionRaw.coordinates)) {
+            // coordinates: [lng, lat]
+            lng = ubicacionRaw.coordinates[0];
+            lat = ubicacionRaw.coordinates[1];
+        } else {
+            lat = ubicacionRaw.lat ?? ubicacionRaw.latitude;
+            lng = ubicacionRaw.lng ?? ubicacionRaw.lon ?? ubicacionRaw.longitude;
+        }
+
+        if (lat === undefined || lng === undefined || isNaN(Number(lat)) || isNaN(Number(lng))) {
+            return sendResponse(res, 400, {}, 'ubicacion debe contener lat y lng numéricos');
+        }
+
+        ubicGeo = { type: 'Point', coordinates: [Number(lng), Number(lat)] };
         const nombreDenunciante = (await User.findById(usuarioId).select('nombreCompleto')).nombreCompleto;
         const nuevaDenuncia = new Denuncia({
             tituloDenuncia: value.tituloDenuncia,
@@ -198,7 +227,7 @@ router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
             descripcion: value.descripcion,
             categoria: value.categoria,
             evidencia: '',
-            ubicacion: value.ubicacion,
+            ubicacion: ubicGeo,
             estado: 'En revisión',
         });
 

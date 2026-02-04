@@ -74,7 +74,7 @@ router.get('/', async (req, res) => {
         const denuncias = await Denuncia.find({ isDeleted: false });
 
         if (denuncias.length === 0) {
-            return sendResponse(res, 404, {}, 'No hay denuncias que mostrar');
+            return sendResponse(res, 200, {}, 'No hay denuncias que mostrar');
         }
 
         sendResponse(res, 200, denuncias, 'Denuncias obtenidas correctamente');
