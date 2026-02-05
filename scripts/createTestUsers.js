@@ -15,7 +15,7 @@ const User = require('../src/Models/user');
 const Admin = require('../src/Models/admin');
 
 // Configuración de conexión
-const uri = process.env.MONGO_URI || `mongodb://localhost:27017/barrios`;
+const uri = process.env.MONGODB_URI || `mongodb://localhost:27017/barrios`;
 
 // Colores para la consola
 const colors = {
