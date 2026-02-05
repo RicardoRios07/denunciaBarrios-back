@@ -1,5 +1,6 @@
 const express = require('express');
 const connMongo = require('./src/Config/Database/configMongo');
+const ensureDBConnection = require('./src/Middleware/ensure-db-connection');
 const swaggerUi = require('swagger-ui-express');
 const morgan = require('morgan');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -18,6 +19,9 @@ const corsOptions = {
     exposedHeaders: ['Content-Length', 'X-Requested-With'],
     optionsSuccessStatus: 200
 };
+
+// Middleware para asegurar conexión DB en serverless
+app.use(ensureDBConnection);
 
 // Middleware para agregar encabezados de seguridad
 app.use((req, res, next) => {
