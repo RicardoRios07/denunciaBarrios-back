@@ -141,31 +141,31 @@ const transporter = nodemailer.createTransport({
 
 
 
-router.post('/', async (req, res) => {
+router.post('/', upload.single('photo'), async (req, res) => {
     try {
         // Validar usuario
         const { error } = schemaRegister.validate(req.body);
         if (error) {
+            console.log("Error de validación:", error.details[0].message);
             return sendResponse(res, 400, {}, error.details[0].message);
-            console.log("Error:", error);
         }
 
         const isEmailExist = await User.findOne({ email: req.body.email });
         if (isEmailExist) {
-            return sendResponse(res, 400, {}, 'Este email ya ha sido registrado.');
             console.log("Este email ya ha sido registrado.");
+            return sendResponse(res, 400, {}, 'Este email ya ha sido registrado.');
         }
 
         const isNumTelefonoExist = await User.findOne({ numTelefono: req.body.numTelefono });
         if (isNumTelefonoExist) {
-            return sendResponse(res, 400, {}, 'Este número de teléfono ya ha sido registrado.');
             console.log("Este número de teléfono ya ha sido registrado.");
+            return sendResponse(res, 400, {}, 'Este número de teléfono ya ha sido registrado.');
         }
 
         const isDniExist = await User.findOne({ cedula: req.body.cedula });
         if (isDniExist) {
-            return sendResponse(res, 400, {}, 'Esta cédula ya ha sido registrada.');
             console.log("Esta cédula ya ha sido registrada.");
+            return sendResponse(res, 400, {}, 'Esta cédula ya ha sido registrada.');
         }
 
         // Hash de la contraseñ
