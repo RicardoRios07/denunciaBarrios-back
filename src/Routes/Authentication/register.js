@@ -189,7 +189,10 @@ router.post('/', upload.single('photo'), async (req, res) => {
         }
 
         // Enviar el correo electrónico de verificación
-        const verificationURL = `${process.env.FRONTEND_URL}/verificarCuenta/${verificationToken}`;
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+        const verificationURL = `${frontendUrl}/verificarCuenta/${verificationToken}`;
+        console.log('URL de verificación generada:', verificationURL);
+        
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
         const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(verificationEmailTemplate);
