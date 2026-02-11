@@ -4,7 +4,38 @@ Este directorio contiene scripts útiles para desarrollo, testing y mantenimient
 
 ## 📜 Scripts Disponibles
 
-### 1. 👥 Creación de Usuarios de Prueba
+### 1. � Creación de Administrador
+**Archivo:** `createAdmin.js`
+
+Script interactivo para crear administradores del sistema de forma segura.
+
+**Ejecutar con:**
+```bash
+npm run create-admin
+```
+o directamente:
+```bash
+node scripts/createAdmin.js
+```
+
+**Características:**
+- ✅ Interfaz interactiva para ingresar datos
+- ✅ Validación de email y contraseña
+- ✅ Verificación de duplicados
+- ✅ Encriptación segura de contraseñas
+- ✅ Administrador verificado automáticamente
+
+**Uso:**
+1. Ejecuta el script
+2. Ingresa el nombre completo del administrador
+3. Proporciona un email válido
+4. Establece una contraseña (mínimo 6 caracteres)
+5. Confirma la contraseña
+6. ¡Listo! El administrador está creado y puede iniciar sesión
+
+---
+
+### 2. �👥 Creación de Usuarios de Prueba
 **Archivo:** `createTestUsers.js`
 
 Este script crea automáticamente usuarios de prueba para desarrollo y testing de la API.
