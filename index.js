@@ -57,7 +57,6 @@ const dashboardRoutes = require ('./src/Routes/dashboardRoutes');
 
 // Ruta de autenticación
 app.use('/auth', AuthRoutes);
-app.use('/admin/dashboard', verifyAdminToken);
 app.use('/admin', adminRoutes);
 
 // Middleware para verificar el token en las rutas protegidas
