@@ -75,7 +75,96 @@ node scripts/createTestPersonal.js
 
 ---
 
-### 3. 🔄 Migración de Denuncias (Nuevos Campos)
+### 3. � Generador de Denuncias de Prueba
+**Archivo:** `createTestDenuncias.js`
+
+Script que genera automáticamente datos realistas para testing completo del sistema.
+
+**Ejecutar con:**
+```bash
+npm run create-denuncias
+```
+o:
+```bash
+npm run seed  # Crea usuarios Y denuncias
+```
+o directamente:
+```bash
+node scripts/createTestDenuncias.js
+```
+
+**Datos Generados:**
+- ✅ 5 usuarios diferentes
+- ✅ 20 denuncias realistas con:
+  - 4 categorías diferentes
+  - 4 estados (En revisión, En proceso, Atendida, No procede)
+  - 4 prioridades (Baja, Media, Alta, Urgente)
+  - Ubicaciones geográficas reales de Loja
+  - Descripciones variadas y realistas
+  - Imágenes de evidencia desde Unsplash
+  - Fechas distribuidas en 30 días
+
+**Ejemplo de Salida:**
+```
+👥 USUARIOS CREADOS: 5
+📋 DENUNCIAS CREADAS: 20
+
+   Por categoría:
+   - Agua Potable: 5
+   - Desechos y Saneamiento: 5
+   - Movilidad Urbana: 5
+   - Obstrucción de construcciones: 5
+
+   Por estado:
+   - En revisión: 5
+   - En proceso: 5
+   - Atendida: 5
+   - No procede: 5
+
+🔐 CREDENCIALES GENERADAS:
+   usuario@test.com (password: usuario123)
+   maria@test.com (password: usuario123)
+   ... más usuarios
+```
+
+Ver [CREATE_DENUNCIAS_GUIDE.md](./CREATE_DENUNCIAS_GUIDE.md) para documentación completa.
+
+---
+
+### 4. 🚀 Generador Avanzado de Denuncias
+**Archivo:** `generateDenunciasAdvanced.js`
+
+Script flexible para generar denuncias con parámetros personalizados.
+
+**Ejecutar con:**
+```bash
+# Generar 50 denuncias generales
+node scripts/generateDenunciasAdvanced.js --cantidad 50
+
+# Generar 20 denuncias solo de agua
+node scripts/generateDenunciasAdvanced.js --cantidad 20 --categoria "Agua Potable, Alcantarillado Sanitario, Alcantarillado Pluvial"
+
+# Generar 15 denuncias urgentes
+node scripts/generateDenunciasAdvanced.js --cantidad 15 --prioridad Urgente
+
+# Generar 10 denuncias en revisión de un usuario específico
+node scripts/generateDenunciasAdvanced.js --cantidad 10 --usuario [ID_USUARIO] --estado "En revisión"
+
+# Ver ver todas las opciones
+node scripts/generateDenunciasAdvanced.js --help
+```
+
+**Opciones:**
+- `--cantidad <número>` - Número de denuncias (default: 10)
+- `--categoria <nombre>` - Filtrar por categoría
+- `--estado <estado>` - Establecer estado específico
+- `--prioridad <nivel>` - Establecer prioridad específica
+- `--usuario <id>` - Generar para usuario específico
+- `--help` - Mostrar ayuda
+
+---
+
+### 5. 🔄 Migración de Denuncias (Nuevos Campos)
 **Archivo:** `migrateDenunciasNuevosCampos.js`
 
 Actualiza denuncias existentes con los nuevos campos implementados (prioridad, historial, etc.)
@@ -93,27 +182,42 @@ node scripts/migrateDenunciasNuevosCampos.js
 
 ---
 
-### 4. 📍 Migración de Ubicación
+### 6. 📍 Migración de Ubicación
 **Archivo:** `migrateUbicacion.js`
 
 Migra el formato de ubicación en denuncias existentes.
 
 ---
 
-## 🚀 Uso del Script
+## 🚀 Comandos Disponibles
 
-### Opción 1: Con npm (Recomendado)
+### Crear Usuarios de Prueba
 ```bash
 npm run create-users
+node scripts/createTestUsers.js
 ```
-o también:
+
+### Crear Denuncias de Prueba (Estándar)
+```bash
+npm run create-denuncias
+node scripts/createTestDenuncias.js
+```
+
+### Crear Usuarios + Denuncias (Completo)
 ```bash
 npm run seed
 ```
 
-### Opción 2: Con Node directamente
+### Crear Denuncias Personalizadas (Avanzado)
 ```bash
-node scripts/createTestUsers.js
+node scripts/generateDenunciasAdvanced.js --cantidad 50
+node scripts/generateDenunciasAdvanced.js --help
+```
+
+### Crear Administrador Interactivamente
+```bash
+npm run create-admin
+node scripts/createAdmin.js
 ```
 
 ## 📋 Prerequisitos

@@ -9,7 +9,8 @@
     "build": "echo 'Build completed'",
     "create-users": "node scripts/createTestUsers.js",
     "create-admin": "node scripts/createAdmin.js",
-    "seed": "node scripts/createTestUsers.js"
+    "create-denuncias": "node scripts/createTestDenuncias.js",
+    "seed": "npm run create-users && npm run create-denuncias"
   },
   "keywords": [],
   "author": "",
