@@ -82,7 +82,10 @@ router.get('/', verifyToken, async (req, res) => {
             return sendResponse(res, 404, {}, 'Usuario no encontrado');
         }
 
-        const denuncias = await Denuncia.find({ idDenunciante: usuarioId, isDeleted: false });
+        const denuncias = await Denuncia.find({ idDenunciante: usuarioId, isDeleted: false })
+            .populate('assigneeId', 'nombreCompleto departamento telefono')
+            .sort({ fechaHora: -1 });
+            
         if (denuncias.length === 0) {
             return sendResponse(res, 200, denuncias, 'El usuario no ha presentado denuncias');
         }

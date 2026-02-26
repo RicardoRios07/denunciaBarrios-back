@@ -54,10 +54,14 @@ const verifyToken = require('./src/Middleware/validate-token');
 const verifyAdminToken = require('./src/Middleware/verifyAdminToken');
 const userRoutes = require('./src/Routes/userRoutes');
 const dashboardRoutes = require ('./src/Routes/dashboardRoutes');
+const personalRoutes = require('./src/Routes/personalRoutes');
+const notificacionesRoutes = require('./src/Routes/notificacionesRoutes');
 
 // Ruta de autenticación
 app.use('/auth', AuthRoutes);
 app.use('/admin', adminRoutes);
+app.use('/personal', personalRoutes);
+app.use('/notificaciones', notificacionesRoutes);
 
 // Middleware para verificar el token en las rutas protegidas
 app.use('/denuncias', verifyToken);

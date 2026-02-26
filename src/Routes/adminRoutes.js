@@ -15,6 +15,9 @@ const asignarPersonal = require('./adminRoutes/asignarPersonal');
 const respuestaPredeterminada = require('./adminRoutes/respuestaPredeterminada');
 const gestionPersonal = require('./adminRoutes/gestionPersonal');
 const historialDenuncia = require('./adminRoutes/historialDenuncia');
+const validarDenuncia = require('./adminRoutes/validarDenuncia');
+const invalidarDenuncia = require('./adminRoutes/invalidarDenuncia');
+const marcarNoAtendible = require('./adminRoutes/marcarNoAtendible');
 
 router.use('/changeStatusUser', statusUser);
 router.use('/deleteDenuncia', deleteDenuncia);
@@ -30,5 +33,8 @@ router.use('/asignarPersonal', asignarPersonal);
 router.use('/respuestaPredeterminada', respuestaPredeterminada);
 router.use('/personal', gestionPersonal);
 router.use('/historialDenuncia', historialDenuncia);
+router.use('/denuncias', validarDenuncia);
+router.use('/denuncias', invalidarDenuncia);
+router.use('/denuncias', marcarNoAtendible);
 
 module.exports = router;

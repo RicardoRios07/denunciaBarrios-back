@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../../Models/user');
 const Admin = require('../../Models/admin');
+const PersonalMunicipal = require('../../Models/personalMunicipal');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
@@ -158,7 +159,55 @@ router.post('/', async (req, res) => {
             }, 'Inicio de sesión exitoso');
         }
 
-        // Si no es usuario normal, buscar en administradores
+        // Si no es usuario normal, buscar en personal municipal
+        let personal = await PersonalMunicipal.findOne({ email });
+        
+        if (personal) {
+            // Es personal municipal
+            if (personal.estado !== 'Activo') {
+                return sendResponse(res, 401, {}, 'El personal no está activo. No puede iniciar sesión');
+            }
+
+            const validPassword = await bcrypt.compare(password, personal.password || '');
+            if (!validPassword) {
+                return sendResponse(res, 400, {}, 'Correo o contraseña incorrectos.');
+            }
+
+            const tokenExpirationSeconds = 3600;
+            token = jwt.sign(
+                { 
+                    _id: personal._id,
+                    role: 'PERSONAL'
+                },
+                process.env.TOKEN_SECRET,
+                { expiresIn: tokenExpirationSeconds }
+            );
+
+            const expirationDate = new Date(new Date().getTime() + tokenExpirationSeconds * 1000);
+
+            // Preparar datos del personal (sin contraseña)
+            const personalData = {
+                _id: personal._id,
+                nombreCompleto: personal.nombreCompleto,
+                email: personal.email,
+                cedula: personal.cedula,
+                telefono: personal.telefono,
+                cargo: personal.cargo,
+                departamento: personal.departamento,
+                especialidad: personal.especialidad,
+                estado: personal.estado,
+                role: 'PERSONAL'
+            };
+
+            return sendResponse(res, 200, { 
+                token, 
+                role: 'personal',
+                user: personalData,
+                expiration: expirationDate.toISOString()
+            }, 'Inicio de sesión exitoso');
+        }
+
+        // Si no es usuario normal ni personal, buscar en administradores
         const admin = await Admin.findOne({ email });
         
         if (!admin) {

@@ -34,7 +34,7 @@ router.get('/:id', verifyAdminToken, async (req, res) => {
 
         const denuncia = await Denuncia.findById(id)
             .populate('idDenunciante', 'nombreCompleto email telefono')
-            .populate('personalAsignado', 'nombreCompleto cargo departamento telefono email')
+            .populate('assigneeId', 'nombreCompleto cargo departamento telefono email')
             .populate('historialEstados.adminResponsable', 'nombreCompleto email');
 
         if (!denuncia) {
@@ -55,13 +55,13 @@ router.get('/:id', verifyAdminToken, async (req, res) => {
                 nombre: denuncia.nombreDenunciante,
                 id: denuncia.idDenunciante
             },
-            personalAsignado: denuncia.personalAsignado ? {
-                nombre: denuncia.personalAsignado.nombreCompleto,
-                cargo: denuncia.personalAsignado.cargo,
-                departamento: denuncia.personalAsignado.departamento,
+            personalAsignado: denuncia.assigneeId ? {
+                nombre: denuncia.assigneeId.nombreCompleto,
+                cargo: denuncia.assigneeId.cargo,
+                departamento: denuncia.assigneeId.departamento,
                 contacto: {
-                    telefono: denuncia.personalAsignado.telefono,
-                    email: denuncia.personalAsignado.email
+                    telefono: denuncia.assigneeId.telefono,
+                    email: denuncia.assigneeId.email
                 }
             } : null,
             respuesta: denuncia.respuestaPredeterminada ? {

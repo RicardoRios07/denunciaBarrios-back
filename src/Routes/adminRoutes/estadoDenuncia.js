@@ -156,10 +156,10 @@ router.post('/', verifyAdminToken, async (req, res) => {
         });
 
         // Si el estado es "Atendida", actualizar contador del personal asignado
-        if (estado === 'Atendida' && denuncia.personalAsignado) {
+        if (estado === 'Atendida' && denuncia.assigneeId) {
             const PersonalMunicipal = require('../../Models/personalMunicipal');
             await PersonalMunicipal.findByIdAndUpdate(
-                denuncia.personalAsignado,
+                denuncia.assigneeId,
                 { $inc: { denunciasResueltas: 1 } }
             );
         }
@@ -167,7 +167,7 @@ router.post('/', verifyAdminToken, async (req, res) => {
         await denuncia.save();
 
         const denunciaActualizada = await Denuncia.findById(_id)
-            .populate('personalAsignado', 'nombreCompleto cargo departamento')
+            .populate('assigneeId', 'nombreCompleto cargo departamento')
             .populate('historialEstados.adminResponsable', 'nombreCompleto email');
 
         // Enviar correo electrónico al usuario sobre la actualización del estado de la denuncia (Opcional)

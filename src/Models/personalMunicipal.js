@@ -39,7 +39,13 @@ const personalMunicipalSchema = new Schema({
     email: {
         type: String,
         trim: true,
-        lowercase: true
+        lowercase: true,
+        unique: true,
+        sparse: true
+    },
+    password: {
+        type: String,
+        trim: true
     },
     estado: {
         type: String,

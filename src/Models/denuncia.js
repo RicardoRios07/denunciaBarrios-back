@@ -22,9 +22,14 @@ const denunciaSchema = new mongoose.Schema(
       trim: true
     },
     evidencia: {
-      type: String,
+      type: [String],
       required: true,
-      trim: true
+      validate: {
+        validator: function(v) {
+          return v && v.length > 0 && v.length <= 5;
+        },
+        message: 'Debe proporcionar entre 1 y 5 evidencias'
+      }
     },
     // GeoJSON Point: { type: 'Point', coordinates: [lng, lat] }
     ubicacion: {
@@ -50,10 +55,18 @@ const denunciaSchema = new mongoose.Schema(
     },
     estado: {
       type: String,
-      enum: ['En revisión', 'En proceso', 'Atendida', 'No procede'],
-      default: 'En revisión'
+      enum: ['REVISION', 'VERIFICADA_NO_ATENDIDA', 'EN_PROCESO', 'ATENDIDA', 'INVALIDA', 'NO_ATENDIBLE'],
+      default: 'REVISION'
     },
-    personalAsignado: {
+    motivoInvalida: {
+      type: String,
+      default: null
+    },
+    razonNoAtendible: {
+      type: String,
+      default: null
+    },
+    assigneeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'PersonalMunicipal',
       default: null

@@ -9,10 +9,12 @@ const fs = require('fs');
 const path = require('path');
 const { sendResponse } = require('../../utils/responseHandler');
 const streamifier = require('streamifier');
+const { notifyAdmins } = require('../../utils/notificationService');
 
 const multer = require('multer');
 const upload = multer({
-    limits: { fileSize: Infinity },
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB por archivo
+    storage: multer.memoryStorage()
 });
 
 /**
@@ -169,7 +171,7 @@ cloudinary.config({
 });
 
 // NUEVA DENUNCIA    
-router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
+router.post('/', verifyToken, upload.array('evidencias', 5), async (req, res) => {
     try {
         const usuarioId = req.user._id;
 
@@ -220,38 +222,50 @@ router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
 
         ubicGeo = { type: 'Point', coordinates: [Number(lng), Number(lat)] };
         const nombreDenunciante = (await User.findById(usuarioId).select('nombreCompleto')).nombreCompleto;
+        
+        // Validar que se hayan subido archivos
+        if (!req.files || req.files.length === 0) {
+            return sendResponse(res, 400, {}, 'Debe proporcionar al menos una evidencia');
+        }
+
+        if (req.files.length > 5) {
+            return sendResponse(res, 400, {}, 'No puede subir más de 5 evidencias');
+        }
+
         const nuevaDenuncia = new Denuncia({
             tituloDenuncia: value.tituloDenuncia,
             idDenunciante: usuarioId,
             nombreDenunciante: nombreDenunciante,
             descripcion: value.descripcion,
             categoria: value.categoria,
-            evidencia: '',
+            evidencia: [], // Array vacío, se llenará después del upload
             ubicacion: ubicGeo,
-            estado: 'En revisión',
+            estado: 'REVISION', // Nuevo estado
         });
 
-        if (req.file) {
-            const publicId = `evidencia_${nuevaDenuncia._id}`;
-            // Uso de upload_stream para cargar directamente desde el buffer
-            await new Promise((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream({
-                    folder: 'denuncia_photos',
-                    public_id: publicId,
-                    format: 'png' // o el formato que necesites
-                }, (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result);
+        // Subir múltiples archivos a Cloudinary en paralelo
+        try {
+            const uploadPromises = req.files.map((file, index) => {
+                return new Promise((resolve, reject) => {
+                    const publicId = `evidencia_${nuevaDenuncia._id}_${index}`;
+                    const uploadStream = cloudinary.uploader.upload_stream({
+                        folder: 'denuncia_photos',
+                        public_id: publicId,
+                        format: 'png'
+                    }, (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result.secure_url);
+                    });
+                    streamifier.createReadStream(file.buffer).pipe(uploadStream);
                 });
-
-                streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
-            }).then((result) => {
-                nuevaDenuncia.evidencia = result.secure_url;
-            }).catch((error) => {
-                console.error('Error al cargar la imagen en Cloudinary:', error);
-                throw new Error('Error al cargar la imagen');
-                sendResponse(res, 500, {}, 'El tamaño de la imagen es muy grande. Intente con una imagen más pequeña.');
             });
+
+            const uploadedUrls = await Promise.all(uploadPromises);
+            nuevaDenuncia.evidencia = uploadedUrls;
+            console.log(`✓ ${uploadedUrls.length} evidencias subidas a Cloudinary`);
+        } catch (error) {
+            console.error('Error al cargar imágenes en Cloudinary:', error);
+            return sendResponse(res, 500, {}, 'Error al cargar las imágenes. Intente con imágenes más pequeñas.');
         }
 
         await nuevaDenuncia.save();
@@ -260,6 +274,25 @@ router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
         usuario.Denuncias.push(nuevaDenuncia);
         usuario.numDenunciasRealizadas += 1;
         await usuario.save();
+
+        // Notificar a todos los administradores
+        try {
+            await notifyAdmins({
+                type: 'denuncia_creada',
+                title: 'Nueva Denuncia Registrada',
+                message: `Nueva denuncia: ${nuevaDenuncia.tituloDenuncia}`,
+                data: {
+                    denunciaId: nuevaDenuncia._id,
+                    titulo: nuevaDenuncia.tituloDenuncia,
+                    categoria: nuevaDenuncia.categoria,
+                    nombreDenunciante: nombreDenunciante
+                }
+            });
+            console.log('✓ Admins notificados de nueva denuncia');
+        } catch (notifError) {
+            console.error('Error notificando a admins:', notifError);
+            // No fallar la request si la notificación falla
+        }
 
         sendResponse(res, 200, nuevaDenuncia, 'Denuncia creada exitosamente');
     } catch (error) {
